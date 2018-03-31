@@ -1,38 +1,37 @@
 export const LOGGING_METHODS = ['log', 'info', 'warn', 'error']
 
 // Initialize suppressors array for all logging methods.
-export const suppressors = LOGGING_METHODS.reduce((suppressors, method) => ({
-  ...suppressors,
-  [method]: []
-}), {})
+export const suppressors = {}
 
-// Create an extended version of console object.
-const supressedConsole = { ...console }
+export const originalMethods = {}
 
 // Register supressors for each of console logging methods.
 LOGGING_METHODS.forEach(method => {
+  suppressors[method] = []
+  originalMethods[method] = console[method]
+
   /**
    * Console logging method override.
    */
-  supressedConsole[method] = (...args) => {
+  console[method] = (...args) => {
     const text = args[0] && args[0].toString && args[0].toString()
 
     if (!suppressors[method].some(suppressor => new RegExp(suppressor).test(text))) {
-      console[method](...args)
+      originalMethods[method](...args)
     }
   }
 
   /**
    * Registers a suppressors for a given method.
    */
-  supressedConsole[method].suppress = (...newSuppressors) => {
+  console[method].suppress = (...newSuppressors) => {
     suppressors[method] = suppressors[method].concat(...newSuppressors)
   }
 
   /**
    * Cleans all suppressors for a given method.
    */
-  supressedConsole[method].cleanSuppressors = (...cleaningSuppressors) => {
+  console[method].cleanSuppressors = (...cleaningSuppressors) => {
     if (cleaningSuppressors.length === 0) {
       suppressors[method] = [] // clear all shortcut
     }
@@ -48,7 +47,7 @@ LOGGING_METHODS.forEach(method => {
   /**
    * Cleans a single specified suppressor for a given method.
    */
-  supressedConsole[method].cleanSuppressor = suppressor => {
+  console[method].cleanSuppressor = suppressor => {
     suppressors[method] = suppressors[method].filter(
       registered => registered.toString() !== suppressor.toString()
     )
@@ -58,22 +57,22 @@ LOGGING_METHODS.forEach(method => {
 /**
  * Registers a suppressors for all methods.
  */
-supressedConsole.suppress = (...newSuppressors) => LOGGING_METHODS.forEach(method => {
-  supressedConsole[method].suppress(...newSuppressors)
+console.suppress = (...newSuppressors) => LOGGING_METHODS.forEach(method => {
+  console[method].suppress(...newSuppressors)
 })
 
 /**
  * Cleans all suppressors for all methods.
  */
-supressedConsole.cleanSuppressors = (...cleaningSuppressors) => LOGGING_METHODS.forEach(method => {
-  supressedConsole[method].cleanSuppressors(...cleaningSuppressors)
+console.cleanSuppressors = (...cleaningSuppressors) => LOGGING_METHODS.forEach(method => {
+  console[method].cleanSuppressors(...cleaningSuppressors)
 })
 
 /**
  * Cleans a single specified suppressor for all methods.
  */
-supressedConsole.cleanSuppressor = suppressor => LOGGING_METHODS.forEach(method => {
-  supressedConsole[method].cleanSuppressor(suppressor)
+console.cleanSuppressor = suppressor => LOGGING_METHODS.forEach(method => {
+  console[method].cleanSuppressor(suppressor)
 })
 
-export default supressedConsole
+export default console
