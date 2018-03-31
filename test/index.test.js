@@ -1,13 +1,13 @@
 import chai from 'chai'
 import spies from 'chai-spies'
-import console, { suppressors, LOGGING_METHODS } from '../src'
+import console, { originalMethods, suppressors, LOGGING_METHODS } from '../src'
 
 chai.use(spies)
 
 const expect = chai.expect
 
 // Register spies.
-LOGGING_METHODS.forEach(method => chai.spy.on(global.console, method))
+LOGGING_METHODS.forEach(method => chai.spy.on(originalMethods, method))
 
 describe('clean', () => {
   describe('cleanSuppressors', () => {
@@ -98,7 +98,7 @@ describe('suppress', () => {
         console[method].suppress(/testing message/)
         console[method]('testing message')
 
-        expect(global.console[method]).not.to.have.been.called.with('testing message')
+        expect(originalMethods[method]).not.to.have.been.called.with('testing message')
       })
     })
 
@@ -107,7 +107,7 @@ describe('suppress', () => {
 
       LOGGING_METHODS.forEach(method => {
         console[method]('testing message')
-        expect(global.console[method]).not.to.have.been.called.with('testing message')
+        expect(originalMethods[method]).not.to.have.been.called.with('testing message')
       })
     })
   })
@@ -118,7 +118,7 @@ describe('suppress', () => {
         console[method].suppress('testing message')
         console[method]('testing message')
 
-        expect(global.console[method]).not.to.have.been.called.with('testing message')
+        expect(originalMethods[method]).not.to.have.been.called.with('testing message')
       })
     })
 
@@ -127,7 +127,7 @@ describe('suppress', () => {
 
       LOGGING_METHODS.forEach(method => {
         console[method]('testing message')
-        expect(global.console[method]).not.to.have.been.called.with('testing message')
+        expect(originalMethods[method]).not.to.have.been.called.with('testing message')
       })
     })
   })
@@ -139,8 +139,8 @@ describe('suppress', () => {
         console[method]('testing message')
         console[method]('another message')
 
-        expect(global.console[method]).not.to.have.been.called.with('testing message')
-        expect(global.console[method]).not.to.have.been.called.with('another message')
+        expect(originalMethods[method]).not.to.have.been.called.with('testing message')
+        expect(originalMethods[method]).not.to.have.been.called.with('another message')
       })
 
       it(`should suppress multiple ${method} strings using spread`, () => {
@@ -148,8 +148,8 @@ describe('suppress', () => {
         console[method]('testing message')
         console[method]('another message')
 
-        expect(global.console[method]).not.to.have.been.called.with('testing message')
-        expect(global.console[method]).not.to.have.been.called.with('another message')
+        expect(originalMethods[method]).not.to.have.been.called.with('testing message')
+        expect(originalMethods[method]).not.to.have.been.called.with('another message')
       })
     })
   })
@@ -161,8 +161,8 @@ describe('suppress', () => {
         console[method]('testing message')
         console[method]('another message')
 
-        expect(global.console[method]).not.to.have.been.called.with('testing message')
-        expect(global.console[method]).not.to.have.been.called.with('another message')
+        expect(originalMethods[method]).not.to.have.been.called.with('testing message')
+        expect(originalMethods[method]).not.to.have.been.called.with('another message')
       })
 
       it(`should suppress multiple ${method} regexes using spread`, () => {
@@ -170,8 +170,8 @@ describe('suppress', () => {
         console[method]('testing message')
         console[method]('another message')
 
-        expect(global.console[method]).not.to.have.been.called.with('testing message')
-        expect(global.console[method]).not.to.have.been.called.with('another message')
+        expect(originalMethods[method]).not.to.have.been.called.with('testing message')
+        expect(originalMethods[method]).not.to.have.been.called.with('another message')
       })
     })
   })
@@ -184,7 +184,7 @@ describe('suppress', () => {
         console[method].suppress(/testing message/)
         console[method](error)
 
-        expect(global.console[method]).not.to.have.been.called.with(error)
+        expect(originalMethods[method]).not.to.have.been.called.with(error)
       })
     })
 
@@ -193,7 +193,7 @@ describe('suppress', () => {
         console[method].suppress('testing message')
         console[method](error)
 
-        expect(global.console[method]).not.to.have.been.called.with(error)
+        expect(originalMethods[method]).not.to.have.been.called.with(error)
       })
     })
   })
