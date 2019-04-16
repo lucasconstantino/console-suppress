@@ -1,5 +1,7 @@
 # Console Suppress
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/lucasconstantino/console-suppress.svg)](https://greenkeeper.io/)
+
 Augments console methods with message suppressing capabilities. Very useful during testing.
 
 ![Build status](https://travis-ci.org/lucasconstantino/console-suppress.svg?branch=master)
